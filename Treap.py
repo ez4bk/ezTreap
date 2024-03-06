@@ -8,11 +8,11 @@ class Treap:
     def __init__(self):
         self.root = None
 
-    def Insert(self, key):
-        print(f"Inserting {key}")
-        new_node = TNode(key, random())
-        self.root = self.TreapInsert(self.root, new_node)
-        # print(f"Current tree:{self.__str__()}")
+    # def Insert(self, key):
+    #     print(f"Inserting {key}")
+    #     new_node = TNode(key, random())
+    #     self.root = self.TreapInsert(self.root, new_node)
+    #     # print(f"Current tree:{self.__str__()}")
 
     def TreapInsert(self, node, new_node):
         if node is None:
@@ -20,10 +20,12 @@ class Treap:
 
         if new_node.key < node.key:
             node.left = self.TreapInsert(node.left, new_node)
+            node.left.parent = node
             if node.left.priority > node.priority:
                 node = self._RightRotate(node)
         else:
             node.right = self.TreapInsert(node.right, new_node)
+            node.right.parent = node
             if node.right.priority > node.priority:
                 node = self._LeftRotate(node)
         return node
@@ -42,32 +44,25 @@ class Treap:
     def _RightRotate(self, node):
         left = node.left
         node.left = left.right
+        if node.left is not None:
+            node.left.parent = node
         left.right = node
-        # Update parent pointers after rotation
-        # left.parent = node.parent
-        # if node.parent is not None:
-        #     if node.parent.left == node:
-        #         node.parent.left = left
-        #     else:
-        #         node.parent.right = left
-        # node.parent = left
+        left.parent = node.parent
+        node.parent = left
         return left
 
     def _LeftRotate(self, node):
         right = node.right
         node.right = right.left
         right.left = node
-        # Update parent pointers after rotation
-        # right.parent = node.parent
-        # if node.parent is not None:
-        #     if node.parent.left == node:
-        #         node.parent.left = right
-        #     else:
-        #         node.parent.right = right
-        # node.parent = right
+        if node.right is not None:
+            node.right.parent = node
+        right.left = node
+        right.parent = node.parent
+        node.parent = right
         return right
 
-    def print_level_order(self):
+    def PrintLevelOrder(self):
         """Prints the tree elements in width-first order as a list"""
         if self.root is None:
             return []
@@ -107,11 +102,23 @@ if __name__ == '__main__':
         'U': 15, 'V': 6, 'W': 11, 'X': 3, 'Y': 9,'Z': 1
     }
 
+    # Insert nodes with random priority
     for c in waitList:
-        new_node = TNode(c, freq[c])
+        new_node = TNode(c, random())
         treap.root = treap.TreapInsert(treap.root, new_node)
 
-    print(f"Current tree:{treap.print_level_order()}")
+    # Insert nodes with priority according to average frequency of each letter in English
+    # for c in waitList:
+    #     new_node = TNode(c, freq[c])
+    #     treap.root = treap.TreapInsert(treap.root, new_node)
+
+    # Insert nodes without priority, thus the tree will be a binary search tree
+    # for c in waitList:
+    #     new_node = TNode(c, 0)
+    #     treap.root = treap.TreapInsert(treap.root, new_node)
+
+    print(f"Current tree:{treap.PrintLevelOrder()}")
+    print(treap.root)
 
     f = open("FellowshipOfTheRing.txt", "r")
     text = ""

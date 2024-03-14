@@ -7,4 +7,8 @@ class TNode:
         self.right = right
 
     def __str__(self):
-        return f'(key={self.key}&priority={self.priority} parentKey=%s left={self.left} right={self.right})' % (self.parent.key if self.parent else None)
+        return (f'(key={self.key} '
+                # f'priority={self.priority} '
+                f'parent={self.parent.key if self.parent else None} '
+                f'left={self.left.key if self.left else None} '
+                f'right={self.right.key if self.right else None})')
